@@ -1,0 +1,28 @@
+---
+- hosts: panos
+  gather_facts: False
+
+  vars:
+    - provider:
+        username: "{{ admin_username }}"
+        password: "{{ admin_password }}"
+        ip_address: "{{ ansible_host }}"
+
+  roles:
+    - role: PaloAltoNetworks.paloaltonetworks
+
+  tasks:
+    - debug:
+        msg: "Debug device: {{ inventory_hostname }} , username: {{ provider.username }} , password: {{ provider.password }} , mgmt_ip: {{ provider.ip_address }}"
+
+    - name: show config 
+      panos_facts:
+        provider: "{{ provider }}"
+        gather_subset: ['config']
+      delegate_to: localhost
+
+    - name: show interfaces
+      panos_facts:
+        provider: "{{ provider }}"
+        gather_subset: ['interfaces']
+      delegate_to: localhost

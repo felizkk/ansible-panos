@@ -1,0 +1,27 @@
+---
+- hosts: panos
+  gather_facts: False
+
+  vars:
+    - provider:
+        username: "{{ admin_username }}"
+        password: "{{ admin_password }}"
+        ip_address: "{{ ansible_host }}"
+    - new_username: "demoadmin"
+    - new_password: "password"
+
+  roles:
+    - role: PaloAltoNetworks.paloaltonetworks
+
+  tasks:
+    - debug:
+        msg: "Debug device: {{ inventory_hostname }} , username: {{ provider.username }} , password: {{ provider.password }} , mgmt_ip: {{ provider.ip_address }}"
+
+    - name: configure superuser 
+      panos_administrator:
+        provider: "{{ provider }}"
+        admin_username: "{{ new_username }}"
+        admin_password: "{{ new_password }}"
+        superuser: true
+        commit: yes
+      delegate_to: localhost
